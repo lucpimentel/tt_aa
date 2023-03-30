@@ -37,11 +37,6 @@ concatenated_df = pd.concat(df_list, ignore_index=True)
 
 
 
-# streamlit with dropdown of two options: serious tone = st, funny
-tone = st.selectbox('What tone of voice would you like to use?',('serious','conversational','informal','casual','assertive','intriguing','formal'))
-
-length = st.selectbox('How long would you like the tweet to be?',('short','medium','long'))
-
 #prompt_1 = f'''"{user_prompt}" Please turn this note into a {length} tweet.
 # It must have a {tone} tone of voice, be precise in its wording, be inspirational, and sound like I am speaking from my own experience.'''
 
