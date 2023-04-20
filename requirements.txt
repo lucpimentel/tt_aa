@@ -3,5 +3,5 @@ openai
 pandas
 scipy
 langchain
-faiss
+faiss-cpu
 tiktoken
