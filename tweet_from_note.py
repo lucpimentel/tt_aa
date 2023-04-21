@@ -45,7 +45,9 @@ if button_isClicked:
         template = f'''You are the best tweet writer in the world.
             Your goal is to turn one of my personal notes into a highly insightful tweet.
             
-            Here are {k} high-performing tweets for reference. When creating your tweet, adopt their structure.
+            Use the structure and style of the tweets down below:
+
+            
             '''
 
         for i in range(k):
