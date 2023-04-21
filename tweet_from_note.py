@@ -16,14 +16,22 @@ st.title('Welcome to the GPT Tweet From Note App!')
 
 api_key = st.text_input('What is your OpenAI API key?')
 
-os.environ['OPENAI_API_KEY'] = api_key
+#os.environ['OPENAI_API_KEY'] = api_key
 
 
 user_prompt = st.text_input('Please insert your note:')
 
-openai_embeddings = OpenAIEmbeddings()
-db = FAISS.load_local('faiss_index',openai_embeddings)
+k = st.slider('Select the number of relevant examples:', 1, 10, 2, step = 1)
 
+temperature = st.slider("Select a temperature value", 0.0, 1.0, 0.6, step=0.05)
+
+top_p = st.slider("Select a top_p value", 0.0, 1.0, 1.0, step=0.05)
+
+try:
+    openai_embeddings = OpenAIEmbeddings(openai_api_key = api_key)
+    db = FAISS.load_local('faiss_index',openai_embeddings)
+except:
+    pass
 
 button_isClicked = st.button("Generate tweet",)
 
@@ -32,20 +40,22 @@ button_isClicked = st.button("Generate tweet",)
 if button_isClicked:
     with st.spinner("Loading..."):
 
-        references = [tweet.page_content for tweet in db.similarity_search(user_prompt,k=3)]
+        references = [tweet.page_content for tweet in db.similarity_search(user_prompt,k=k)]
 
-        template = f'''You are a world-class twitter ghostwriter. Your goal is to create a tweet for me.
-        It must be precise in its wording, be inspirational, and sound like I am speaking from my own experience.
+        template = f'''You are the best tweet writer in the world.
+            Your goal is to turn one of my personal notes into a highly insightful tweet.
+            
+            Here are {k} high-performing tweets for reference. When creating your tweet, adopt their structure.
+            '''
 
-        For reference, use these high-performing tweets as templates.
+        for i in range(k):
+            template += f'\nTemplate {i+1}: {references[i]}\n'
 
-        Template 1: {references[0]}
+        #template += '\nSo now that you are armed with all of the necessary information, I will give you one of my personal notes for you to create 1 tweet.'
 
-        Template 2: {references[1]}
+        #st.write(template)
 
-        Template 3: {references[2]}
-        '''
-
-        response_text = openai_api_call(user_prompt, template)
+        response_text = openai_api_call(user_prompt, template, temperature = temperature, top_p = top_p)
         st.text_area('Tweet:',response_text,height = 200)
+        st.write(references)
         button_isClicked = False
